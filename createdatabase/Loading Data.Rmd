@@ -1,0 +1,283 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# Setup necessary Libraries
+```{r}
+library(readr)
+library(dplyr)
+```
+
+
+# Download the Data Set
+```{r echo=TRUE}
+beer_reviews <- read_csv("beer_reviews.csv")
+#update columns names
+beer_reviews <- beer_reviews %>%
+                  rename(
+                    beer_id = beer_beerid,
+                    username = review_profilename,
+                    review_date = review_time,
+                    overall_score = review_overall,
+                    palette_score = review_palate,
+                    aroma_score = review_aroma,
+                    appearence_score = review_appearance
+                  )
+#change date formatting
+beer_reviews$review_date <- as.Date(as.POSIXct(beer_reviews$review_date, origin = "1970-01-01", tz = "UTC"))
+beer_reviews <- beer_reviews %>% select(-index)
+
+#add in a review ID to the DF
+beer_reviews <- beer_reviews %>%
+                  mutate(review_id = row_number())
+brewery <- read_csv("breweries_us.csv")
+
+```
+# Clean the Data
+
+In this section, we perform data cleaning. The following actions are taken:
+
+- Split the `beer_reviews` dataset into data frames representing the tables we want to load into MySQL:
+  - `users` and `beers` data frames are created
+
+- Compare the breweries in the reviews file to our `breweries` dataset:
+  - For any breweries found in the reviews but missing from the reference data, we add them to the `breweries` data frame using the created data
+  
+## Load users
+```{r echo=TRUE}
+#load users from the beer reviews and give them a password
+users <- beer_reviews %>% 
+  select(username) %>%
+  mutate(password = "password") 
+#store off the duplicates for review
+duplicates <- users %>%
+  group_by(username) %>%
+  filter(n() > 1)
+#remove the duplicates
+users <- users %>% distinct(username, .keep_all = TRUE)
+
+
+```
+## Load beers 
+```{r}
+#load beers from the beer reviews
+beers <- beer_reviews %>% 
+  select(beer_id, Name = beer_name, style = beer_style, abv= beer_abv, brewery_id)
+
+#store off the duplicates for review
+duplicates <- beers %>%
+  group_by(beer_id) %>%
+  filter(n() > 1)
+#remove the duplicates
+beers <- beers %>% distinct(beer_id, .keep_all = TRUE)
+
+#remove these columns from teh beer_reviews
+#remove some columns from beer_reviews
+beer_reviews <- beer_reviews %>% select(-beer_name, -beer_style, -beer_name, -beer_abv)
+
+```
+
+## remove brewery duplicates and assign brewery ids to existing breweries
+The goal here is identify which breweries from the Brewerys CSV exist in the reviews file and then
+give the brewery_id to that brewery. 
+```{r echo=TRUE, results='show'}
+#remove the duplciate lines from the brewery data frame and store how many locations (lines) were in the data set
+#get counts of duplicates
+brew_count <- brewery %>%
+                group_by(brewery_name) %>%
+                summarise(numLocations = n(), .groups = "drop")
+
+#brew_count %>% filter(brewery_name == "BJ's Restaurant & Brewery" )
+#remove the duplicates
+brewery <- brewery %>%
+  distinct(brewery_name, .keep_all = TRUE)
+#left join them back together
+brewery <- brew_count %>%
+  left_join(brewery, by = "brewery_name")
+
+#remove columns
+brewery <- brewery %>%
+  select(-state_breweries)
+
+#find the breweries that are in the database so we can append the breweryID
+clean_brewery_review <- beer_reviews %>% distinct(brewery_name, .keep_all = TRUE) %>% select(brewery_name, brewery_id)
+
+brewery <- brewery %>%
+              left_join(clean_brewery_review %>% select(brewery_name, brewery_id), by = "brewery_name")
+
+
+
+```
+
+## Create synthetic data for breweries in reviews file, but not brewery database
+```{r echo=TRUE, results='show'}
+
+#find the breweries in the reviews that aren't in the database 
+missingNames <- beer_reviews %>%
+                  anti_join(brewery, by = "brewery_id") %>%
+                  select(brewery_id, brewery_name)
+
+#remove duplicates with multiple locations
+#remove the duplciate lines from the brewery data frame and store how many locations (lines) were in the data set
+#get counts of duplicates
+miss_brew_count <- missingNames %>%
+                group_by(brewery_id) %>%
+                summarise(numLocations = n(), .groups = "drop")
+
+#brew_count %>% filter(brewery_name == "BJ's Restaurant & Brewery" )
+#remove the duplicates
+missingNames <- missingNames %>%
+  distinct(brewery_id, .keep_all = TRUE)
+#left join them back together
+missingNames <- miss_brew_count %>%
+  left_join(missingNames, by = "brewery_id")
+
+
+missingNames %>% distinct() %>% count()
+
+#show information on the data set
+beer_reviews %>% count(brewery_name)
+
+#Make up information for the missing breweries
+## brewery_id, state, website, type, adddress
+
+#types - grab a random one from this established list
+types <- brewery %>% distinct(type)
+
+# Add synthetic column with random values
+missingNames <- missingNames %>%
+  mutate(type = sample(types$type, n(), replace = TRUE))
+
+#state - grab a random one from the list
+
+states <- brewery %>% distinct(state)
+missingNames <- missingNames %>%
+  mutate(state = sample(states$state, n(), replace = TRUE))
+
+#address = "no address listed"
+missingNames <- missingNames %>%
+  mutate(address = "not listed")
+
+#website = "No website listed"
+missingNames <- missingNames %>%
+  mutate(website = "not listed")
+
+#add default locations
+missingNames <- missingNames %>%
+  mutate(numLocations = 1)
+
+#add into brewery
+brewery <- bind_rows(brewery, missingNames)
+
+#add in brewer IDs to anything missing
+#if brewery_id is NA give increment it from the max ID in the database by 1
+maxID <- max(brewery$brewery_id, na.rm=TRUE)
+
+brewery <- brewery %>%
+  mutate(brewery_id = if_else(!is.na(brewery_id),brewery_id, row_number() + maxID))
+
+#rename the name column
+brewery <- brewery %>%
+  rename(name = brewery_name)
+
+#fix a malformed name
+brewery$name[str_detect(brewery$name, "Gordon Biersch Brewery Restaurant - Washington")] <- "Gordon Biersch Brewery Restaurant - Washington"
+
+
+#remove the columns taht are stored in different tables
+beer_reviews <- beer_reviews %>% select(-brewery_id, -brewery_name)
+```
+
+# Store the dataframes to the database
+```{r echo=TRUE}
+library(DBI)
+library(RMySQL)
+
+con <- dbConnect(
+  RMySQL::MySQL(),
+  dbname = "beerapp",
+  host = "localhost",
+  port = 3306,
+  user = "root",
+  password = "bAseball!13"
+)
+dbListTables(con)
+
+
+dbAppendTable(conn = con, name = "Users", value = users, overwrite=FALSE, append = TRUE)
+
+dbDisconnect(con)
+```
+
+```{r}
+
+
+
+write.csv(users, "users.csv", row.names = FALSE)
+write.csv(brewery, "breweries.csv",row.names = FALSE)
+write.csv(beers, "beers.csv", row.names = FALSE)
+write.csv(beer_reviews, "reviews.csv", row.names = FALSE)
+
+write_delim(users, "users.txt", delim="|")
+write_delim(beers, "beers.txt", delim="|")
+write_delim(brewery, "breweries.txt", delim="|")
+
+```
+
+```{r}
+#only neeeded if we wanted to make smaller files for import. 
+chunk_size <- 500000
+n_chunks <- ceiling(nrow(beer_reviews) / chunk_size)
+for (i in 1:n_chunks) {
+  start <- ((i - 1) * chunk_size) + 1
+  end <- min(i * chunk_size, nrow(beer_reviews))
+  chunk <- beer_reviews[start:end,]
+  filename <- str_c("reviews",i,".txt")
+  print(filename)
+  write_delim(chunk, filename, delim="|")
+}
+```
+
+```{r}
+cnt <- brewery %>%
+                group_by(brewery_id) %>%
+                summarise(beercnt = n(), .groups = "drop")
+```
+
+```{r}
+brewery %>% filter(numLocations == 97701)
+
+library(stringr)
+
+brewery$name[str_detect(brewery$name, "Gordon Biersch Brewery Restaurant - Washington")] <- "Gordon Biersch Brewery Restaurant - Washington"
+beers %>% filter(str_detect(Name, ","))
+
+```
+
+```{r}
+beers %>%
+  anti_join(brewery, by = "brewery_id")
+
+beers %>%
+  inner_join(brewery, by = "brewery_id")
+```
+
+```{r}
+beer_reviews %>% filter(brewery_id == '12613')
+
+beer_reviews %>% filter(str_detect(brewery_name,"Sierra Madre"))
+```
+
+```{r}
+max(beer_reviews$overall_score)
+
+head(beer_reviews,100)
+```
+```{r}
+#troubleshoot username 
+
+beer_reviews %>%
+  anti_join(users, by="username")
+```
+
+
