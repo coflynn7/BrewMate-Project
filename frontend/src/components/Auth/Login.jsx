@@ -25,7 +25,14 @@ function Login() {
             password: pin
         })
         .then(response => navigate("../search", {replace: true}))
-        .catch(error => console.error('API error:', error));
+        .catch(error => {
+            if(error.response && error.response.status === 401) {
+                alert("The credentials provided were not valid. Please try again.");
+            }
+            else {
+                alert("An error occurred during the login process. Please try again later.");
+            }
+        });
     }
 
   return <div className="container d-flex justify-content-center mt-5">
