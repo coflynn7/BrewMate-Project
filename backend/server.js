@@ -34,6 +34,48 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+//register a new user
+app.post('/api/register', async (req, res) => {
+
+  const {username, password} = req.body;
+
+  //make sure that username isn't already taken
+    try {
+      const [rows] = await pool.query(`select * from users where username = ?`, 
+        [username]);
+
+      if (rows.length > 0) {
+        return res.status(409).json({ message: 'Username already in use' });
+      }
+
+      await pool.query(`insert into users (username, password) values (?, ?)`, 
+        [username, password]);
+
+       res.json({ message: 'Register successful!'});
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error during register process' });
+    }
+
+  //check them against the database
+  //not doing anything fancy/ too secure for this project
+    try {
+      const [rows] = await pool.query(`select * from users where username = ? and replace(password, char(13), '') = ?`, 
+        [username, password]);
+
+      if (rows.length === 0) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+       res.json({ message: 'Login successful!'});
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+});
+
 //searching the beer database given user-selected filters
 app.get('/api/search', (req, res) => {
   //extract search criteria provided by the user
@@ -47,6 +89,18 @@ app.get('/api/search', (req, res) => {
 
   res.json({ results });
 });
+
+//retrieving recent reviews
+app.get('/api/recentReviews', async (req, res) => {
+    try {
+      const [rows] = await pool.query('select * from reviews order by review_date desc limit 15');
+      res.json(rows);
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to retrieve recent reviews' });
+  }
+})
 
 //getting the beer styles in the dataset
 app.get('/api/uniqueBeerStyles', async (req, res) => {
