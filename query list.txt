@@ -1,0 +1,12 @@
+15 most recent reviews
+top rated beers
+top rated breweries
+table for the beers I've reviewing showing my average compared to average of all reviews of that beer
+top rated beers in breweries
+show breweries in my state
+show all my reviews
+compare beers
+compare breweries (maybe)
+find breweries with specific beer varieties
+show my favorites
+show the most favorited beers
