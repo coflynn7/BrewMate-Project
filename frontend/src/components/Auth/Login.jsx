@@ -24,7 +24,7 @@ function Login() {
             username: username,
             password: pin
         })
-        .then(response => navigate("../search", {replace: true}))
+        .then(response => navigate("../home", {replace: true}))
         .catch(error => {
             if(error.response && error.response.status === 401) {
                 alert("The credentials provided were not valid. Please try again.");
