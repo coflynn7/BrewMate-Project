@@ -1,5 +1,5 @@
 ########################
-# This stored procedure returns the total 
+# This stored procedure returns the top rated beers
 #
 ########################
 
