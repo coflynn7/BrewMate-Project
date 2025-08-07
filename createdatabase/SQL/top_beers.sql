@@ -1,10 +1,19 @@
-set @target_score = 4;
+########################
+# This stored procedure returns the total 
+#
+########################
 
-select beer.brewery_id, max(beer.Name), avg(reviews.overall_score)
+drop procedure if exists top_beers;
+delimiter $$
+create procedure top_beers(IN target_score decimal(2,1), IN offsetAmt int)
+begin
+select beer.beer_id , max(beer.Name) 'max', avg(reviews.overall_score) 'avg'
 from reviews
 	left outer join beer
       on reviews.beer_id = beer.beer_id
 group by beer.beer_id
-having avg(reviews.overall_score) > @target_score
+having avg(reviews.overall_score) >= target_score
 ORDER BY avg(reviews.overall_score) DESC
-LIMIT 10
+LIMIT 10 OFFSET offsetAmt;
+end $$
+delimiter ;
