@@ -178,6 +178,25 @@ app.get('/api/similarbeers', async (req, res) => {
   }
 })
 
+app.get('/api/userdiff', async (req, res) => {
+    try {
+	   //hard coding parameters, these should be passed by the user
+	  const username = 'northyorksammy'
+	  console.time('proc')
+
+
+      const [rows] = await pool.query('CALL user_review_diff(?);', [username]);
+		
+	  console.timeEnd('proc')
+
+      res.json(rows);
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to similar beer list' });
+  }
+})
+
 //start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
