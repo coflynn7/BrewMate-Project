@@ -124,9 +124,8 @@ app.get('/api/topbeers', async (req, res) => {
 	  console.time('proc')
 
 
-      const [rows, fields] = await pool.query('CALL top_beers(?, ? );', [targetScore, offsetAmt]);
+      const [rows] = await pool.query('CALL top_beers(?, ? );', [targetScore, offsetAmt]);
 		
-	console.log(fields?.sql)
 	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
 	  console.timeEnd('proc')
 
@@ -148,17 +147,34 @@ app.get('/api/topbrewery', async (req, res) => {
 	  console.time('proc')
 
 
-      const [rows, fields] = await pool.query('CALL top_brewery(?, ? );', [targetScore, offsetAmt]);
+      const [rows] = await pool.query('CALL top_brewery(?, ? );', [targetScore, offsetAmt]);
 		
-	console.log(fields?.sql)
-	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
 	  console.timeEnd('proc')
 
       res.json(rows);
     } 
     catch (err) {
       console.error('DB query error:', err);
-      res.status(500).json({ error: 'Failed to fetch beer list' });
+      res.status(500).json({ error: 'Failed to fetch brewery list' });
+  }
+})
+
+app.get('/api/similarbeers', async (req, res) => {
+    try {
+	   //hard coding parameters, these should be passed by the user
+	  const beer_id = 3;
+	  console.time('proc')
+
+
+      const [rows] = await pool.query('CALL similar_beers(?);', [beer_id]);
+		
+	  console.timeEnd('proc')
+
+      res.json(rows);
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to similar beer list' });
   }
 })
 
