@@ -97,6 +97,29 @@ app.get('/api/uniqueBeerStyles', async (req, res) => {
   }
 })
 
+app.get('/api/topbeers', async (req, res) => {
+    try {
+	   //hard coding parameters, these should be passed by the user
+	  const targetScore = 4.0;
+	  const offsetAmt = 0;
+	  
+	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
+	  console.time('proc')
+
+
+      const [rows] = await pool.query('CALL top_beers(?, ? );', [targetScore, offsetAmt]);
+		
+	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
+	  console.timeEnd('proc')
+
+      res.json(rows);
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch beer list' });
+  }
+})
+
 //start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

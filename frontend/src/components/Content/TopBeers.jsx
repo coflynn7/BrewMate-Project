@@ -14,7 +14,8 @@ function TopBeers () {
     const loadTopBeers = () => {
         api.get('/topbeers')
         .then((res) => {
-            setTopBeers(res.data);
+            setTopBeers(res.data[0]);
+            console.log("received data: " + res.data[0]);
         })
         .catch((err) => console.error('Error getting top beers', err));
     };
@@ -38,7 +39,7 @@ function TopBeers () {
                 }
             </Row>
             : <>
-                <p>The top beers are currently loading!</p>
+                <p>The top beers are currently loading ...</p>
             </>
         }
     </div>

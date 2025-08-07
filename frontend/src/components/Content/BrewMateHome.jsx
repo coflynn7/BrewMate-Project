@@ -10,7 +10,6 @@ function BrewMateHome () {
     const navigate = useNavigate();
 
     const [recentReviews, setRecentReviews] = useState([]);
-    const [contentDesc, setContentDesc] = useState("recent")
 
     const loadRecentReviews = () => {
         api.get('/recentReviews')
@@ -32,7 +31,7 @@ function BrewMateHome () {
         <Button variant="link">Top Rated Breweries</Button>
         <Button variant="link">Most Favorited Beers</Button>
 
-        <h4>Showing <strong>{contentDesc}</strong> reviews</h4>
+        <h4>Showing <strong>recent</strong> reviews</h4>
         {
         recentReviews.length > 0 ?
             <Row>
@@ -45,7 +44,7 @@ function BrewMateHome () {
                 }
             </Row>
             : <>
-                <p>There are no reviews on this page yet!</p>
+                <p>Recent reviews are currently loading ...</p>
             </>
         }
     </div>
