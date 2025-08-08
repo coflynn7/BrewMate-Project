@@ -7,7 +7,7 @@ drop procedure if exists top_beers;
 delimiter $$
 create procedure top_beers(IN target_score decimal(2,1), IN offsetAmt int)
 begin
-select beer.beer_id , max(beer.Name) 'max', avg(reviews.overall_score) 'avg'
+select beer.beer_id , max(beer.Name) 'Name', avg(reviews.overall_score) 'avg'
 from reviews
 	left outer join beer
       on reviews.beer_id = beer.beer_id
