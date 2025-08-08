@@ -57,23 +57,6 @@ app.post('/api/register', async (req, res) => {
       console.error(err);
       res.status(500).json({ message: 'Server error during register process' });
     }
-
-  //check them against the database
-  //not doing anything fancy/ too secure for this project
-    try {
-      const [rows] = await pool.query(`select * from users where username = ? and replace(password, char(13), '') = ?`, 
-        [username, password]);
-
-      if (rows.length === 0) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-       res.json({ message: 'Login successful!'});
-    }
-    catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Server error' });
-    }
 });
 
 //searching the beer database given user-selected filters
@@ -93,7 +76,7 @@ app.get('/api/search', (req, res) => {
 //retrieving recent reviews
 app.get('/api/recentReviews', async (req, res) => {
     try {
-      const [rows] = await pool.query('select * from reviews order by review_date desc limit 15');
+      const [rows] = await pool.query('select r.*,b.Name from reviews r inner join beer b on r.beer_id = b.beer_id order by r.review_date desc limit 15');
       res.json(rows);
     } 
     catch (err) {
@@ -116,20 +99,20 @@ app.get('/api/uniqueBeerStyles', async (req, res) => {
 
 app.get('/api/topbeers', async (req, res) => {
     try {
-	   //hard coding parameters, these should be passed by the user
-	  const targetScore = 4.0;
-	  const offsetAmt = 0;
+
+    const targetScore = Number(req.query.targetScore) || 4;
+    const offsetAmt   = Number(req.query.offset) || 0;
 	  
 	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
 	  console.time('proc')
 
-
-      const [rows] = await pool.query('CALL top_beers(?, ? );', [targetScore, offsetAmt]);
+    const [rows] = await pool.query('CALL top_beers(?, ? );', [targetScore, offsetAmt]);
 		
 	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
 	  console.timeEnd('proc')
 
-      res.json(rows);
+
+    res.json(rows);
     } 
     catch (err) {
       console.error('DB query error:', err);
@@ -137,17 +120,14 @@ app.get('/api/topbeers', async (req, res) => {
   }
 })
 
+<<<<<<< HEAD
 app.get('/api/topbrewery', async (req, res) => {
     try {
 	   //hard coding parameters, these should be passed by the user
 	  const targetScore = 4.0;
 	  const offsetAmt = 0;
 	  
-	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
-	  console.time('proc')
-
-
-      const [rows] = await pool.query('CALL top_brewery(?, ? );', [targetScore, offsetAmt]);
+	        const [rows] = await pool.query('CALL top_brewery(?, ? );', [targetScore, offsetAmt]);
 		
 	  console.timeEnd('proc')
 
@@ -213,6 +193,26 @@ app.get('/api/beerbybrew', async (req, res) => {
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to similar beer list' });
+
+app.get('/api/favs', async (req, res) => {
+    try {
+      
+    const user = Number(req.query.username);
+	  
+	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL user_favorites(?);', [user]);
+		
+	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch favorites' });
   }
 })
 
