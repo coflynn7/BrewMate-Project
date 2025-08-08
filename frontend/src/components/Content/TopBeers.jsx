@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Col, Row, Button } from "react-bootstrap";
+import { useRef, useState, useEffect } from 'react';
+import { Col, Row, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
@@ -11,11 +11,19 @@ function TopBeers () {
 
     const [topBeers, setTopBeers] = useState([]);
 
+    const targetScoreRef = useRef();
+    const offsetRef = useRef();
+
     const loadTopBeers = () => {
-        api.get('/topbeers')
+        setTopBeers([]);
+        api.get('/topbeers', {
+            params: {
+                targetScore: targetScoreRef.current.value,
+                offset: offsetRef.current.value
+            }
+        })
         .then((res) => {
             setTopBeers(res.data[0]);
-            console.log("received data: " + res.data[0]);
         })
         .catch((err) => console.error('Error getting top beers', err));
     };
@@ -26,7 +34,27 @@ function TopBeers () {
 
         <Button variant="link" onClick={() => navigate("../Home")}>Go Home</Button>
 
-        <h4>Showing <strong>Top Beers</strong></h4>
+        <h3>Showing <strong>Top Beers</strong></h3>
+
+        <div>
+            <Form onSubmit={loadTopBeers} className="d-flex justify-content-center align-items-center gap-2" style={{ flexWrap: 'nowrap' }}>
+
+            <Form.Group className="mb-0" controlId="targetScoreInput">
+            <Form.Label>Minimum Score</Form.Label>
+            <Form.Control id="targetScoreInput" ref={targetScoreRef} defaultValue="4" style={{ width: '120px', height: '38px' }}/>
+            </Form.Group>
+
+            <Form.Group className="mb-0" controlId="offsetInput">
+            <Form.Label>Skip Top Reviews #</Form.Label>
+            <Form.Control id="offsetInput" ref={offsetRef} defaultValue="0" style={{ width: '120px', height: '38px' }}/>
+            </Form.Group>
+
+            <Button variant="primary" onClick={loadTopBeers} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
+            </Form>
+
+        </div>
+
+        <div>
         {
         topBeers.length > 0 ?
             <Row>
@@ -42,6 +70,7 @@ function TopBeers () {
                 <p>The top beers are currently loading ...</p>
             </>
         }
+        </div>
     </div>
 }
 
