@@ -1,12 +1,22 @@
-15 most recent reviews
-top rated beers
-top rated breweries
+15 most recent reviews - not SP
+top rated beers - top_beer
+top rated breweries - top_brewery
 table for the beers I've reviewing showing my average compared to average of all reviews of that beer
-top rated beers in breweries
-show breweries in my state
-show all my reviews
-compare beers
-compare breweries (maybe)
-find breweries with specific beer varieties
-show my favorites
-show the most favorited beers
+top rated beers in breweries - top_beer_by_brew
+show breweries in my state - find_breweries
+show all my reviews  not SP
+compare beers - similar_beers
+compare breweries (maybe) - did not implement yet
+find breweries with specific beer varieties - find_breweries
+show my favorites - not a SP
+show the most favorited beers - most_favorited
+count of times favorited by beer - beer_fav
+user favorite beers - user_favorites
+top reviewers - top_reviewers
+my reviews vs average - user_review_diff
+
+inserting SPs
+insert_brewery
+insert_beer
+insert_fav
+insert_review

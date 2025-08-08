@@ -1,0 +1,20 @@
+Database testing will be broken into two major parts; Performance testing and Functional testing. 
+
+Performance Testing:
+Each query will be called from the server and the total time for a response will be logged. i will use a baseline of 30 seconds for further investigation. If a query runs for over 30 seconds i will use various performance testing tools like examing the query plan to see if there are optimizations or changes to the result set to get the response time lower. In some cases i am expected the query will need to exceed this threshold due to the high volume of data processed. 
+
+Functional Testing:
+
+For functional testing we will be doing the following 4 things. 
+
+Validating Inputs
+We will test calling stored procedures with various different inputs that both make sense and do not make sense to verify the procedures functions as expected. 
+
+Handling Similar Tuples
+This testing will handle edge cases where similar sounding beers or breweries will be queried to validate it is being handled appropriately and in a way the user will understand. 
+
+Spot checking data
+Each query/stored procedure will be run and the results will be validated by manually inspecting the input data to validate results match. Another approach we will use here is to come up wtih simpler queries that can be used to validate results. For example the sp that returns the top beers we will use a query that shows all reviews for that beer and manually calculate it's average to ensure it matches. 
+
+Mocking
+Our last testing approach will be to mock data and verify the sp results match what we have mocked. 
