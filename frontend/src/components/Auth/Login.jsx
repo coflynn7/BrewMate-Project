@@ -1,9 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
+import { UserContext } from '../Contexts/UserContext';
+
 function Login() {
+    const { userId, setUserId } = useContext(UserContext);
+    
     const usernameRef = useRef();
     const pinRef = useRef();
 
@@ -24,7 +28,10 @@ function Login() {
             username: username,
             password: pin
         })
-        .then(response => navigate("../home", {replace: true}))
+        .then(response => {
+            setUserId(username);
+            navigate("../home", {replace: true});
+        })
         .catch(error => {
             if(error.response && error.response.status === 401) {
                 alert("The credentials provided were not valid. Please try again.");

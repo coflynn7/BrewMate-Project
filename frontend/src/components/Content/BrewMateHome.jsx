@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Col, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
+import { FavoritesContext } from '../Contexts/FavoritesContext';
 import Review from './Review';
 
 function BrewMateHome () {
@@ -19,7 +20,22 @@ function BrewMateHome () {
         .catch((err) => console.error('Error getting recent reviews', err));
     };
 
+    const { favorites, setFavorites } = useContext(FavoritesContext);
+
+    const loadFavorites = () => {
+        api.get('/favs', {
+            params: {
+                username: "coflynn"
+            }            
+        })
+        .then((res) => {
+            setFavorites(res.data);
+        })
+        .catch((err) => console.error('Error getting favorites', err));
+    };
+
     useEffect(loadRecentReviews, []);
+    useEffect(loadFavorites, []);
 
     return <div className="text-center">
         <h1>Welcome to BrewMate!</h1>

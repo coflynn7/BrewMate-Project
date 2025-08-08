@@ -99,7 +99,7 @@ app.get('/api/uniqueBeerStyles', async (req, res) => {
 
 app.get('/api/topbeers', async (req, res) => {
     try {
-      
+
     const targetScore = Number(req.query.targetScore) || 4;
     const offsetAmt   = Number(req.query.offset) || 0;
 	  
@@ -117,6 +117,28 @@ app.get('/api/topbeers', async (req, res) => {
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to fetch beer list' });
+  }
+})
+
+app.get('/api/favs', async (req, res) => {
+    try {
+      
+    const user = Number(req.query.username);
+	  
+	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL user_favorites(?);', [user]);
+		
+	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch favorites' });
   }
 })
 
