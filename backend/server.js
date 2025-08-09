@@ -120,15 +120,30 @@ app.get('/api/topbeers', async (req, res) => {
   }
 })
 
+app.post('/api/addFavorite', async (req, res) => {
+  const {beerId, userId} = req.body;
+
+    try {
+      await pool.query(`insert into favoritebeers (beer_id, username) values (?, ?)`, 
+        [beerId, userId]);
+
+       res.json({ message: 'Favorite added successfully!'});
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error during add favorite process' });
+    }
+})
+
 app.get('/api/favs', async (req, res) => {
     try {
       
-    const user = Number(req.query.username);
-	  
+    const userId = req.query.username;
+    
 	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
 	  console.time('proc')
 
-    const [rows] = await pool.query('CALL user_favorites(?);', [user]);
+    const [rows] = await pool.query('CALL user_favorites(?);', [userId]);
 		
 	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
 	  console.timeEnd('proc')

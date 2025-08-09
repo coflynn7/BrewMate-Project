@@ -41,12 +41,12 @@ function TopBeers () {
 
             <Form.Group className="mb-0" controlId="targetScoreInput">
             <Form.Label>Minimum Score</Form.Label>
-            <Form.Control id="targetScoreInput" ref={targetScoreRef} defaultValue="4" style={{ width: '120px', height: '38px' }}/>
+            <Form.Control ref={targetScoreRef} defaultValue="4" style={{ width: '120px', height: '38px' }}/>
             </Form.Group>
 
             <Form.Group className="mb-0" controlId="offsetInput">
             <Form.Label>Skip Top Reviews #</Form.Label>
-            <Form.Control id="offsetInput" ref={offsetRef} defaultValue="0" style={{ width: '120px', height: '38px' }}/>
+            <Form.Control ref={offsetRef} defaultValue="0" style={{ width: '120px', height: '38px' }}/>
             </Form.Group>
 
             <Button variant="primary" onClick={loadTopBeers} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>

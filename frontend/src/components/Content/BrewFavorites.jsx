@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Col, Row, Button, Form } from "react-bootstrap";
+import { Col, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import Beer from './Beer';
