@@ -157,6 +157,25 @@ app.get('/api/favs', async (req, res) => {
   }
 })
 
+app.get('/api/mostFavorited', async (req, res) => {
+    try {
+	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL most_favorited();');
+		
+	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch most favorited beers' });
+  }
+})
+
 //start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

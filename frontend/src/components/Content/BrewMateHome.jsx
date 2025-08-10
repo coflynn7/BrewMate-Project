@@ -21,8 +21,8 @@ function BrewMateHome () {
         .catch((err) => console.error('Error getting recent reviews', err));
     };
 
-    const { favorites, setFavorites } = useContext(FavoritesContext);
-    const {userId, setUserId} = useContext(UserContext);
+    const { setFavorites } = useContext(FavoritesContext);
+    const { userId } = useContext(UserContext);
 
     const loadFavorites = () => {
         api.get('/favs', {
@@ -47,7 +47,7 @@ function BrewMateHome () {
         <Button variant="link">Leave a Review</Button>
         <Button variant="link" onClick={() => navigate("../topbeers")}>Top Rated Beers</Button>
         <Button variant="link">Top Rated Breweries</Button>
-        <Button variant="link">Most Favorited Beers</Button>
+        <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>
 
         <h4>Showing <strong>recent</strong> reviews</h4>
         {

@@ -24,7 +24,7 @@ function BrewFavorites () {
                 {
                     favorites.map(beer => {
                         return <Col key={beer.beer_id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <Beer {...beer}/>
+                            <Beer context="favorite" {...beer}/>
                         </Col>
                     })
                 }

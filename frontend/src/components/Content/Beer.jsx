@@ -8,7 +8,7 @@ import { UserContext } from '../Contexts/UserContext';
 
 function Beer(props) {
     const { favorites, setFavorites } = useContext(FavoritesContext);
-    const { userId, setUserId } = useContext(UserContext);
+    const { userId } = useContext(UserContext);
 
     const [isFavorite, setIsFavorite] = useState(favorites.some( fav => fav.beer_id === props.beer_id));
     const [loading, setLoading] = useState(false);
@@ -61,8 +61,9 @@ function Beer(props) {
         {isFavorite ? <FaHeart /> : <FaRegHeart />}
         </div>
         <Card.Body>
-            <Card.Title>{props.max} </Card.Title>
-            <Card.Subtitle>Score: {props.avg}</Card.Subtitle>
+            <Card.Title>{props.Name} </Card.Title>
+            {props.context === "top beers" ? <Card.Subtitle>Score: {props.avg}</Card.Subtitle>: ""}
+            {props.context === "most favorited" ? <Card.Subtitle>Favorited {props.count} times</Card.Subtitle>: ""}
         </Card.Body>
     </Card>)
 }
