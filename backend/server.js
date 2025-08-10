@@ -120,6 +120,28 @@ app.get('/api/topbeers', async (req, res) => {
   }
 })
 
+app.get('/api/topBreweries', async (req, res) => {
+    try {
+
+    const targetScore = Number(req.query.targetScore) || 4;
+    const offsetAmt   = Number(req.query.offset) || 0;
+	  
+	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL top_brewery(?, ? );', [targetScore, offsetAmt]);
+		
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch top breweries' });
+  }
+})
+
 app.post('/api/addFavorite', async (req, res) => {
   const {beerId, userId} = req.body;
 

@@ -45,8 +45,8 @@ function BrewMateHome () {
         <Button variant="link" onClick={() => navigate("../favorites")}>My Favorites</Button>
         <Button variant="link">My Reviews</Button>
         <Button variant="link">Leave a Review</Button>
-        <Button variant="link" onClick={() => navigate("../topbeers")}>Top Rated Beers</Button>
-        <Button variant="link">Top Rated Breweries</Button>
+        <Button variant="link" onClick={() => navigate("../topBeers")}>Top Rated Beers</Button>
+        <Button variant="link" onClick={() => navigate("../topBreweries")}>Top Rated Breweries</Button>
         <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>
 
         <h4>Showing <strong>recent</strong> reviews</h4>
