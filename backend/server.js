@@ -200,8 +200,6 @@ app.get('/api/beerbybrew', async (req, res) => {
 	}
 })
 
-app.get('/api/favs', async (req, res) => {
-
 
 app.post('/api/addFavorite', async (req, res) => {
   const {beerId, userId} = req.body;
