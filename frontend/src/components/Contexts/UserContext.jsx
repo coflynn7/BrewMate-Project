@@ -6,7 +6,10 @@ export const UserContext = createContext();
 // Create the provider component
 export function UserProvider({ children }) {
   const [userId, setUserId] = useState(null);
-
+ // Define clearUser so it's not undefined
+  const clearUser = () => {
+    setUserId(null);
+  };
   return (
     <UserContext.Provider value={{ userId, setUserId, clearUser }}>
       {children}

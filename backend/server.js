@@ -120,7 +120,6 @@ app.get('/api/topbeers', async (req, res) => {
   }
 })
 
-<<<<<<< HEAD
 app.get('/api/topbrewery', async (req, res) => {
     try {
 	   //hard coding parameters, these should be passed by the user
@@ -193,6 +192,8 @@ app.get('/api/beerbybrew', async (req, res) => {
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to similar beer list' });
+	}
+})
 
 app.get('/api/favs', async (req, res) => {
     try {
