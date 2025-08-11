@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
 import { FavoritesContext } from '../Contexts/FavoritesContext';
+import { UserContext } from '../Contexts/UserContext';
 import Review from './Review';
 
 function BrewMateHome () {
@@ -20,18 +21,19 @@ function BrewMateHome () {
         .catch((err) => console.error('Error getting recent reviews', err));
     };
 
-    const { favorites, setFavorites } = useContext(FavoritesContext);
+    const { setFavorites } = useContext(FavoritesContext);
+    const { userId } = useContext(UserContext);
 
     const loadFavorites = () => {
         api.get('/favs', {
             params: {
-                username: "coflynn"
+                username: userId
             }            
         })
         .then((res) => {
-            setFavorites(res.data);
+            setFavorites(res.data[0]);
         })
-        .catch((err) => console.error('Error getting favorites', err));
+        .catch((err) => console.error('Error getting favorites', err.response?.data || err.message));
     };
 
     useEffect(loadRecentReviews, []);
@@ -40,12 +42,12 @@ function BrewMateHome () {
     return <div className="text-center">
         <h1>Welcome to BrewMate!</h1>
 
-        <Button variant="link">My Favorites</Button>
+        <Button variant="link" onClick={() => navigate("../favorites")}>My Favorites</Button>
         <Button variant="link">My Reviews</Button>
         <Button variant="link">Leave a Review</Button>
-        <Button variant="link" onClick={() => navigate("../topbeers")}>Top Rated Beers</Button>
-        <Button variant="link">Top Rated Breweries</Button>
-        <Button variant="link">Most Favorited Beers</Button>
+        <Button variant="link" onClick={() => navigate("../topBeers")}>Top Rated Beers</Button>
+        <Button variant="link" onClick={() => navigate("../topBreweries")}>Top Rated Breweries</Button>
+        <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>
 
         <h4>Showing <strong>recent</strong> reviews</h4>
         {

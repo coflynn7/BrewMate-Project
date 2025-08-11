@@ -3,41 +3,41 @@ import { Col, Row, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
-import Beer from './Beer';
+import Brewery from './Brewery';
 
-function TopBeers () {
+function TopBreweries () {
 
     const navigate = useNavigate();
 
-    const [topBeers, setTopBeers] = useState([]);
+    const [topBreweries, setTopBreweries] = useState([]);
 
     const targetScoreRef = useRef();
     const offsetRef = useRef();
 
-    const loadTopBeers = () => {
-        setTopBeers([]);
-        api.get('/topbeers', {
+    const loadTopBreweries = () => {
+        setTopBreweries([]);
+        api.get('/topBreweries', {
             params: {
                 targetScore: targetScoreRef.current.value,
                 offset: offsetRef.current.value
             }
         })
         .then((res) => {
-            setTopBeers(res.data[0]);
+            setTopBreweries(res.data[0]);
         })
         .catch((err) => console.error('Error getting top beers', err));
     };
 
-    useEffect(loadTopBeers, []);
+    useEffect(loadTopBreweries, []);
 
     return <div className="text-center">
 
         <Button variant="link" onClick={() => navigate("../Home")}>Go Home</Button>
 
-        <h3>Showing <strong>Top Beers</strong></h3>
+        <h3>Showing <strong>Top Breweries</strong></h3>
 
         <div>
-            <Form onSubmit={loadTopBeers} className="d-flex justify-content-center align-items-center gap-2" style={{ flexWrap: 'nowrap' }}>
+            <Form onSubmit={loadTopBreweries} className="d-flex justify-content-center align-items-center gap-2" style={{ flexWrap: 'nowrap' }}>
 
             <Form.Group className="mb-0" controlId="targetScoreInput">
             <Form.Label>Minimum Score</Form.Label>
@@ -49,29 +49,29 @@ function TopBeers () {
             <Form.Control ref={offsetRef} defaultValue="0" style={{ width: '120px', height: '38px' }}/>
             </Form.Group>
 
-            <Button variant="primary" onClick={loadTopBeers} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
+            <Button variant="primary" onClick={loadTopBreweries} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
             </Form>
 
         </div>
 
         <div>
         {
-        topBeers.length > 0 ?
+        topBreweries.length > 0 ?
             <Row>
                 {
-                    topBeers.map(beer => {
-                        return <Col key={beer.beer_id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <Beer context="top beers" {...beer}/>
+                    topBreweries.map(brewery => {
+                        return <Col key={brewery.brewery_id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                            <Brewery context="top breweries" {...brewery}/>
                         </Col>
                     })
                 }
             </Row>
             : <>
-                <p>The top beers are currently loading ...</p>
+                <p>The top breweries are currently loading ...</p>
             </>
         }
         </div>
     </div>
 }
 
-export default TopBeers;
+export default TopBreweries;
