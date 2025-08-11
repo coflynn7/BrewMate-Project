@@ -111,15 +111,14 @@ app.get('/api/topbeers', async (req, res) => {
 	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
 	  console.timeEnd('proc')
 
-
     res.json(rows);
+
     } 
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to fetch beer list' });
   }
 })
-
 
 app.get('/api/topBreweries', async (req, res) => {
     try {
@@ -142,64 +141,6 @@ app.get('/api/topBreweries', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch top breweries' });
   }
 })
-
-app.get('/api/similarbeers', async (req, res) => {
-    try {
-	   //hard coding parameters, these should be passed by the user
-	  const beer_id = 3;
-	  console.time('proc')
-
-
-      const [rows] = await pool.query('CALL similar_beers(?);', [beer_id]);
-		
-	  console.timeEnd('proc')
-
-      res.json(rows);
-    } 
-    catch (err) {
-      console.error('DB query error:', err);
-      res.status(500).json({ error: 'Failed to similar beer list' });
-  }
-})
-
-app.get('/api/userdiff', async (req, res) => {
-    try {
-	   //hard coding parameters, these should be passed by the user
-	  const username = 'northyorksammy'
-	  console.time('proc')
-
-
-      const [rows] = await pool.query('CALL user_review_diff(?);', [username]);
-		
-	  console.timeEnd('proc')
-
-      res.json(rows);
-    } 
-    catch (err) {
-      console.error('DB query error:', err);
-      res.status(500).json({ error: 'Failed to similar beer list' });
-  }
-})
-
-app.get('/api/beerbybrew', async (req, res) => {
-    try {
-	   //hard coding parameters, these should be passed by the user
-	  const brewery_id = 2
-	  console.time('proc')
-
-
-      const [rows] = await pool.query('CALL top_beer_by_brew(?);', [brewery_id]);
-		
-	  console.timeEnd('proc')
-
-      res.json(rows);
-    } 
-    catch (err) {
-      console.error('DB query error:', err);
-      res.status(500).json({ error: 'Failed to similar beer list' });
-	}
-})
-
 
 app.post('/api/addFavorite', async (req, res) => {
   const {beerId, userId} = req.body;
