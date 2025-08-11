@@ -1,10 +1,12 @@
+DROP DATABASE IF EXISTS beermate;
+
 CREATE DATABASE BEERMATE;
 USE BEERMATE;
 
 DROP TABLE IF EXISTS BREWERY;
 
 CREATE TABLE BREWERY (
-	brewery_id BIGINT,
+	brewery_id BIGINT NOT NULL auto_increment,
     name varchar(100),
     state varchar(20),
     website varchar(300),
@@ -17,7 +19,7 @@ CREATE TABLE BREWERY (
 DROP TABLE IF EXISTS BEER;
 
 CREATE TABLE BEER (
-	beer_id BIGINT,
+	beer_id BIGINT NOT NULL auto_increment,
     Name varchar(100),
     style varchar(100),
     abv varchar(10),
@@ -37,7 +39,7 @@ CREATE TABLE USERS (
 DROP TABLE IF EXISTS REVIEWS;
 
 CREATE TABLE REVIEWS (
-	review_id bigint,
+	review_id bigint NOT NULL auto_increment,
     username varchar(25),
     beer_id bigint,
     review_date datetime,
