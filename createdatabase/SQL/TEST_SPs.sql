@@ -21,6 +21,14 @@ delete from brewery where brewery_id = 30308;
 select count(*) from brewery;
 call insert_brewery("tylers brew", "wisconsin", "cool", "website", "n3234", 1);
 select count(*) from brewery;
-select * from brewery where Name like 'tylers%'
-
+select * from brewery where Name like 'tylers%';
 call insert_review('northyorksammy', 12, current_timestamp(),5, 5,5, 5,5);
+call beer_info(3);
+call beer_search_name('ale');
+select * from reviews limit 2;
+call delete_review(1);
+select * from reviews limit 2;
+
+select * from favoritebeers;
+call delete_fav(12, 'northyorksammy');
+select * from favoritebeers;
