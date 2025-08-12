@@ -1,5 +1,5 @@
 ########################
-# This stored procedure inserts a users favorite beer into the database
+# This stored procedure inserts a user review into the database
 #NOTE I should update this to validate params before storing
 ########################
 drop procedure if exists insert_review;
