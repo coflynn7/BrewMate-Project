@@ -1,0 +1,6 @@
+Transition my queries in server.js to SPs:
+1. Logging in: select * from users where username = ? and password = ?, [username, password]
+2. Register pt. 1 - check if username already taken: select * from users where username = ?, [username]
+3. Register pt. 2: insert into users (username, password) values (?, ?), [username, password]
+4. Get recent reviews: select r.*,b.Name from reviews r inner join beer b on r.beer_id = b.beer_id order by r.review_date desc limit 15
+5. Get my reviews: select * from reviews where username = ?, [userId]

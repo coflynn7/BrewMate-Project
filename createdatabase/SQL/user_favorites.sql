@@ -6,7 +6,7 @@ drop procedure if exists user_favorites;
 delimiter $$
 create procedure user_favorites(IN user varchar(25))
 begin
-select beer.Name, beer.Name, beer.style
+select beer.beer_id, beer.Name, beer.style
 from favoritebeers
 	INNER JOIN beer
 		on favoritebeers.beer_id = beer.beer_id

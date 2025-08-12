@@ -146,8 +146,7 @@ app.post('/api/addFavorite', async (req, res) => {
   const {beerId, userId} = req.body;
 
     try {
-      await pool.query(`insert into favoritebeers (beer_id, username) values (?, ?)`, 
-        [beerId, userId]);
+      await pool.query('CALL insert_fav(?, ?);', [beerId, userId]);
 
        res.json({ message: 'Favorite added successfully!'});
     }
