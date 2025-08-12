@@ -9,6 +9,7 @@ import BrewFavorites from './Content/BrewFavorites';
 import TopBeers from './Content/TopBeers';
 import TopBreweries from './Content/TopBreweries';
 import MostFavoritedBrews from './Content/MostFavoritedBrews';
+import MyBrewReviews from './Content/MyBrewReviews';
 
 import { FavoritesProvider } from './Contexts/FavoritesContext';
 import { UserProvider } from './Contexts/UserContext';
@@ -25,6 +26,7 @@ function BrewMate() {
           <Route path="/register" element={<BrewMateRegister />}></Route>
           <Route path="/home" element={<BrewMateHome />}></Route>
           <Route path="/favorites" element={<BrewFavorites />}></Route>
+          <Route path="/myReviews" element={<MyBrewReviews />}></Route>
           <Route path="/topBeers" element={<TopBeers />}></Route>
           <Route path="/topBreweries" element={<TopBreweries />}></Route>
           <Route path="/mostFavorited" element={<MostFavoritedBrews />}></Route>

@@ -19,7 +19,7 @@ app.post('/api/login', async (req, res) => {
   //check them against the database
   //not doing anything fancy/ too secure for this project
     try {
-      const [rows] = await pool.query(`select * from users where username = ? and replace(password, char(13), '') = ?`, 
+      const [rows] = await pool.query(`select * from users where username = ? and password = ?`, 
         [username, password]);
 
       if (rows.length === 0) {
@@ -166,8 +166,7 @@ app.get('/api/favs', async (req, res) => {
 	  console.time('proc')
 
     const [rows] = await pool.query('CALL user_favorites(?);', [userId]);
-		
-	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
+
 	  console.timeEnd('proc')
 
     res.json(rows);
@@ -195,6 +194,61 @@ app.get('/api/mostFavorited', async (req, res) => {
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to fetch most favorited beers' });
+  }
+})
+
+app.get('/api/findBeer', async (req, res) => {
+    try {
+      
+    let beerName = req.query.beerName.trim().toLowerCase();
+    
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL beer_search_name(?);', [beerName]);
+    
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to perform beer search' });
+  }
+})
+
+app.post('/api/addReview', async (req, res) => {
+  const {userId, beerId, timestamp, overall, palette, aroma, appearance, taste} = req.body;
+
+    try {
+      await pool.query(`CALL insert_review (?, ?, ?, ?, ?, ?, ?, ?);`, 
+        [userId, beerId, timestamp, overall, palette, aroma, appearance, taste]);
+
+       res.json({ message: 'Review added successfully!'});
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error during add review process' });
+    }
+})
+
+app.get('/api/myReviews', async (req, res) => {
+    try {
+      
+    const userId = req.query.userId;
+    
+	  console.time('proc')
+
+    const [rows] = await pool.query('select * from reviews where username = ?;', [userId]);
+
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch favorites' });
   }
 })
 

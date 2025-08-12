@@ -5,12 +5,14 @@ import api from '../../api/axios';
 
 import { FavoritesContext } from '../Contexts/FavoritesContext';
 import { UserContext } from '../Contexts/UserContext';
+import LeaveReviewModal from '../Modals/LeaveReviewModal';
 import Review from './Review';
 
 function BrewMateHome () {
 
     const navigate = useNavigate();
 
+    const [showReviewModal, setShowReviewModal] = useState(false);
     const [recentReviews, setRecentReviews] = useState([]);
 
     const loadRecentReviews = () => {
@@ -43,8 +45,9 @@ function BrewMateHome () {
         <h1>Welcome to BrewMate!</h1>
 
         <Button variant="link" onClick={() => navigate("../favorites")}>My Favorites</Button>
-        <Button variant="link">My Reviews</Button>
-        <Button variant="link">Leave a Review</Button>
+        <Button variant="link" onClick={() => navigate("../myReviews")}>My Reviews</Button>
+        <Button variant="link" onClick={() => setShowReviewModal(true)}>Leave a Review</Button>
+            <LeaveReviewModal show={showReviewModal} handleClose={() => setShowReviewModal(false)} />
         <Button variant="link" onClick={() => navigate("../topBeers")}>Top Rated Beers</Button>
         <Button variant="link" onClick={() => navigate("../topBreweries")}>Top Rated Breweries</Button>
         <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>
