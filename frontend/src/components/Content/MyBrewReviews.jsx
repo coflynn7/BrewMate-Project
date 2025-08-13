@@ -22,7 +22,6 @@ function MyBrewReviews () {
             }
         })
         .then((res) => {
-            console.log("review data: ", res.data[0]);
             setReviews(res.data);
         })
         .catch((err) => console.error('Error getting my reviews', err));

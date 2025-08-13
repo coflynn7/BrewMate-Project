@@ -6,7 +6,7 @@ drop procedure if exists most_favorited;
 delimiter $$
 create procedure most_favorited()
 begin
-select count(*) 'count', beer.Name, beer.Name, beer.style
+select count(*) 'count', beer.beer_id, beer.Name, beer.style
 from favoritebeers
 	INNER JOIN beer
 		on favoritebeers.beer_id = beer.beer_id

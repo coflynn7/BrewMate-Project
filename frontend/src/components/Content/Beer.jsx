@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Card } from "react-bootstrap";
+import { Card, Collapse, Button, Spinner } from "react-bootstrap";
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import api from '../../api/axios';
 
@@ -12,6 +12,10 @@ function Beer(props) {
 
     const [isFavorite, setIsFavorite] = useState(favorites.some( fav => fav.beer_id === props.beer_id));
     const [loading, setLoading] = useState(false);
+
+    const [open, setOpen] = useState(false);  //whether the detail section is being shown or not
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [beerDetails, setBeerDetails] = useState(null);
 
     const handleFavoriteClick = async () => {
         try {
@@ -27,7 +31,7 @@ function Beer(props) {
             //toggle icon
             setIsFavorite(!isFavorite);
 
-            //keep our context update to date as well
+            //keep our context up to date as well
             setFavorites((prev) => {
                 //avoid duplicates
                 if (prev.includes(props.beer_id))
@@ -44,8 +48,37 @@ function Beer(props) {
         }
     };
 
+    const toggleBeerDetailSection = () => {
+        //collapse if the detail section is currently expanded
+        if (open) {
+            setOpen(false);
+            return;
+        }
+
+        // if details not yet loaded, fetch them now
+        if (!beerDetails) {
+            setLoading(true);
+
+            api.get('/beerInfo', {
+                params: {
+                    beerId: props.beer_id
+                }
+            })
+            .then((res) => {
+                setBeerDetails(res.data[0][0]);
+            })
+            .catch((err) => console.error('Error getting beer details', err))
+            .finally( () => {
+                setDetailLoading(false);
+            });
+        }
+
+        //open now that we have the details
+        setOpen(true);
+    }
+
     return (
-    <Card bg="secondary" text="white" style={{margin: "0.5rem", height: "6rem"}}>
+    <Card bg="secondary" text="white" style={{margin: "0.5rem"}}>
         <div
         style={{
             position: 'absolute',
@@ -64,6 +97,29 @@ function Beer(props) {
             <Card.Title>{props.Name} </Card.Title>
             {props.context === "top beers" ? <Card.Subtitle>Score: {props.avg}</Card.Subtitle>: ""}
             {props.context === "most favorited" ? <Card.Subtitle>Favorited {props.count} times</Card.Subtitle>: ""}
+           <Button
+                variant="dark"
+                onClick={toggleBeerDetailSection}
+                aria-controls={`beer-details-${props.beer_id}`}
+                aria-expanded={open}
+                style={{marginTop: ".5rem"}}
+                size = "sm"
+            >
+            {open ? "Hide Details" : "Show Details"}
+           </Button>
+           <Collapse in={open}>
+            <div id={`beer-details-${props.beer_id}`} style={{ marginTop: "1rem" }}>
+                {detailLoading && <Spinner animation="border" size="sm" />}
+                {!detailLoading && beerDetails && (
+                <>
+                    <strong>ABV:</strong> {beerDetails.abv !== "NA" ? beerDetails.abv + "%": "Unknown"} <br />
+                    <strong>Style:</strong> {beerDetails.style} <br />
+                    <strong>Brewery:</strong> {beerDetails.Brewery_name} <br />
+                    <strong>Brewery State:</strong> {beerDetails.state} <br />
+                </>
+                )}
+            </div>
+           </Collapse>
         </Card.Body>
     </Card>)
 }

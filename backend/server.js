@@ -251,6 +251,26 @@ app.get('/api/myReviews', async (req, res) => {
   }
 })
 
+app.get('/api/beerInfo', async (req, res) => {
+    try {
+      
+    const beerId = req.query.beerId;
+    
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL beer_info(?)', [beerId]);
+
+	  console.timeEnd('proc')
+
+    res.json(rows);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch beer details' });
+  }
+})
+
 //start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
