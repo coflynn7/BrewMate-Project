@@ -49,6 +49,7 @@ CREATE TABLE REVIEWS (
     appearance_score int,
     taste_score int,
     primary key (review_id),
+    INDEX idx_score (overall_score),
     foreign key (beer_id) references beer(beer_id) ON DELETE CASCADE,
     foreign key (username) references users(username) ON DELETE cascade
     );
