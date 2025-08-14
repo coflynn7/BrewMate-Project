@@ -9,7 +9,7 @@ function BrewFavorites () {
 
     const navigate = useNavigate();
 
-    const { favorites, setFavorites } = useContext(FavoritesContext);
+    const { favorites } = useContext(FavoritesContext);
 
     return <div className="text-center">
 

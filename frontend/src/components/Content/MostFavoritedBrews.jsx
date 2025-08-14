@@ -9,12 +9,14 @@ function MostFavoritedBrews () {
     const navigate = useNavigate();
 
     const [beers, setBeers] = useState([]);
+    const [beersLoaded, setBeersLoaded] = useState(false);
 
     const loadMostFavoritedBeers = () => {
         setBeers([]);
         api.get('/mostFavorited')
         .then((res) => {
             setBeers(res.data[0]);
+            setBeersLoaded(true);
         })
         .catch((err) => console.error('Error getting most favorited beers', err));
     };
@@ -39,9 +41,11 @@ function MostFavoritedBrews () {
                     })
                 }
             </Row>
-            : <>
-                <p>The most favorited beers are currently loading ...</p>
-            </>
+            : beersLoaded ? <p>No beers have been favorited!</p> 
+                :
+                <>
+                    <p>The most favorited beers are currently loading ...</p>
+                </>
         }
         </div>
     </div>

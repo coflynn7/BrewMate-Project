@@ -19,7 +19,7 @@ function getFormattedDateTime() {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function LeaveReviewModal({ show, handleClose }) {
+function LeaveReviewModal({ show, handleClose, addToRecents }) {
   const [step, setStep] = useState(1);  //since this is a two part modal, track which step we're on
   const [beer, setBeer] = useState(null);
   const [error, setError] = useState(null);
@@ -65,18 +65,21 @@ function LeaveReviewModal({ show, handleClose }) {
 
   const submitReview = async () => {
     try {
-      await api.post('/addReview', { 
+      const res = await api.post('/addReview', { 
           beerId: beer.beer_id,
+          beerName: beer.Name,
           userId: userId,
           timestamp: getFormattedDateTime(),
-          overall:overallRef.current.value,
+          overall: overallRef.current.value,
           palette: paletteRef.current.value,
           aroma: aromaRef.current.value,
           appearance: appearanceRef.current.value,
           taste: tasteRef.current.value
       });
-
-      setShowToast(true);
+      if(res.data.success) {
+        addToRecents(res.data.review); //adds the new review to the recent reviews in the parent component
+        setShowToast(true);
+      }
     } 
     catch (error) {
       console.error("Error adding review:", error);
@@ -181,9 +184,6 @@ function LeaveReviewModal({ show, handleClose }) {
       autohide
       bg="success"
     >
-      <Toast.Header>
-        <strong className="me-auto">Success</strong>
-      </Toast.Header>
       <Toast.Body className="text-white">Review submitted successfully!</Toast.Body>
     </Toast>
   </ToastContainer>

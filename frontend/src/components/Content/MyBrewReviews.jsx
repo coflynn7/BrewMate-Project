@@ -6,13 +6,13 @@ import Review from './Review';
 import { UserContext } from '../Contexts/UserContext';
 
 function MyBrewReviews () {
-    //todo: handle case where user has no reviews
 
     const navigate = useNavigate();
 
     const { userId } = useContext(UserContext);
 
     const [reviews, setReviews] = useState([]);
+    const [reviewsLoaded, setReviewsLoaded] = useState(false);
 
     const loadMyReviews = () => {
         setReviews([]);
@@ -23,11 +23,23 @@ function MyBrewReviews () {
         })
         .then((res) => {
             setReviews(res.data);
+            setReviewsLoaded(true);
         })
         .catch((err) => console.error('Error getting my reviews', err));
     };
 
-    useEffect(loadMyReviews, []);
+    useEffect(loadMyReviews, [userId]);
+
+    const deleteReview = async (reviewId) => {
+        try {
+            await api.post("/deleteReview", { reviewId: reviewId });
+            //update state as well
+            setReviews(prev => prev.filter(r => r.review_id !== reviewId));
+        } 
+        catch (err) {
+            console.error("Error deleting review:", err);
+        }
+    };
 
     return <div className="text-center">
 
@@ -42,14 +54,16 @@ function MyBrewReviews () {
                 {
                     reviews.map(review => {
                         return <Col key={review.review_id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <Review {...review}/>
+                            <Review {...review} onDelete={() => deleteReview(review.review_id)}/>
                         </Col>
                     })
                 }
             </Row>
-            : <>
-                <p>My reviews are currently loading ...</p>
-            </>
+            : reviewsLoaded ? <p>You don't have any reviews!</p> 
+                :
+                <>
+                    <p>My reviews are currently loading ...</p>
+                </>
         }
         </div>
     </div>

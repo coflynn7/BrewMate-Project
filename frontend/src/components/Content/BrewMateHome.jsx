@@ -24,7 +24,7 @@ function BrewMateHome () {
     };
 
     const { setFavorites } = useContext(FavoritesContext);
-    const { userId } = useContext(UserContext);
+    const { userId, clearUser } = useContext(UserContext);
 
     const loadFavorites = () => {
         api.get('/favs', {
@@ -38,8 +38,29 @@ function BrewMateHome () {
         .catch((err) => console.error('Error getting favorites', err.response?.data || err.message));
     };
 
+    const handleLogout = () => {
+        clearUser();
+        navigate("../");
+    }
+
+    const deleteReview = async (reviewId) => {
+        try {
+            await api.post("/deleteReview", { reviewId: reviewId });
+            //update state as well
+            setRecentReviews(prev => prev.filter(r => r.review_id !== reviewId));
+        } 
+        catch (err) {
+            console.error("Error deleting review:", err);
+        }
+    };
+
+    const addReview = (newReview) => {
+        setRecentReviews(prevReviews => [newReview, ...prevReviews]);
+    }
+
     useEffect(loadRecentReviews, []);
-    useEffect(loadFavorites, []);
+    useEffect(loadFavorites, [userId, setFavorites]);  //only need this to run once at initial login
+                                                       //setFavorites is only here to clear a warning
 
     return <div className="text-center">
         <h1>Welcome to BrewMate!</h1>
@@ -47,10 +68,11 @@ function BrewMateHome () {
         <Button variant="link" onClick={() => navigate("../favorites")}>My Favorites</Button>
         <Button variant="link" onClick={() => navigate("../myReviews")}>My Reviews</Button>
         <Button variant="link" onClick={() => setShowReviewModal(true)}>Leave a Review</Button>
-            <LeaveReviewModal show={showReviewModal} handleClose={() => setShowReviewModal(false)} />
+            <LeaveReviewModal show={showReviewModal} addToRecents={addReview} handleClose={() => setShowReviewModal(false)} />
         <Button variant="link" onClick={() => navigate("../topBeers")}>Top Rated Beers</Button>
         <Button variant="link" onClick={() => navigate("../topBreweries")}>Top Rated Breweries</Button>
         <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>
+        <Button variant="link" onClick={handleLogout}>Logout</Button>
 
         <h4>Showing <strong>recent</strong> reviews</h4>
         {
@@ -59,7 +81,7 @@ function BrewMateHome () {
                 {
                     recentReviews.map(r => {
                         return <Col key={r.review_id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <Review {...r}/>
+                            <Review {...r} onDelete={() => deleteReview(r.review_id)}/>
                         </Col>
                     })
                 }

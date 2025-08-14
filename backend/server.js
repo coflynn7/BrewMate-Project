@@ -156,6 +156,21 @@ app.post('/api/addFavorite', async (req, res) => {
     }
 })
 
+app.post('/api/deleteFavorite', async (req, res) => {
+  
+  const {beerId, userId} = req.body;
+
+  try {
+      await pool.query('CALL delete_fav(?, ?);', [beerId, userId]);
+
+       res.json({ message: 'Favorite deleted successfully!'});
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error during delete favorite process' });
+    }
+})
+
 app.get('/api/favs', async (req, res) => {
     try {
       
@@ -217,17 +232,45 @@ app.get('/api/findBeer', async (req, res) => {
 })
 
 app.post('/api/addReview', async (req, res) => {
-  const {userId, beerId, timestamp, overall, palette, aroma, appearance, taste} = req.body;
+  const {userId, beerName, beerId, timestamp, overall, palette, aroma, appearance, taste} = req.body;
 
     try {
-      await pool.query(`CALL insert_review (?, ?, ?, ?, ?, ?, ?, ?);`, 
+      const [rows] = await pool.query('CALL insert_review (?, ?, ?, ?, ?, ?, ?, ?);', 
         [userId, beerId, timestamp, overall, palette, aroma, appearance, taste]);
 
-       res.json({ message: 'Review added successfully!'});
+       res.json({ 
+        success: true,
+        review: {
+          review_id: rows[0][0].review_id,
+          Name: beerName,
+          username: userId,
+          beer_id: beerId,
+          review_date: timestamp,
+          overall_score: overall,
+          palette_score: palette,
+          aroma_score: aroma,
+          appearance_score: appearance,
+          taste_score: taste
+        }
+       });
     }
     catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Server error during add review process' });
+    }
+})
+
+app.post('/api/deleteReview', async (req, res) => {
+  const reviewId = req.body.reviewId;
+
+    try {
+      await pool.query('CALL delete_review (?);', [reviewId]);
+
+       res.json({ message: 'Review deleted successfully!'});
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error during delete review process' });
     }
 })
 

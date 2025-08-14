@@ -8,5 +8,6 @@ create procedure insert_review(IN username varchar(25), IN beer_id bigint, IN re
 begin
 insert into reviews ( username, beer_id, review_date, overall_score, palette_score, aroma_score, appearance_score, taste_score)
 values (username, beer_id, review_date, overall_score, palette_score, aroma_score, appearance_score, taste_score);
+select LAST_INSERT_ID() as new_review_id;
 end $$
 delimiter ;
