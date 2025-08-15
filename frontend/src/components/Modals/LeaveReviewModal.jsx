@@ -50,17 +50,18 @@ function LeaveReviewModal({ show, handleClose, addToRecents }) {
         setBeer(res.data[0][0]);  //to do: rethink how to handle this 
         setStep(2);
       })
-      .catch((err) => console.error('Error looking up the beer', err));
-
+      .catch((err) => {
+        if(err?.response.status === 404) {
+          setError("No matching beer found. Please verify the spelling and try again.");
+        }
+        else{
+          console.error('Error looking up the beer', err)
+        }
+      });
     } 
     catch {
       setError("Error finding beer. Please try again.");
     }
-    /*
-    finally {
-      setValidating(false);
-    }
-    */
   };
 
   const submitReview = async () => {

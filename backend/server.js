@@ -219,6 +219,10 @@ app.get('/api/findBeer', async (req, res) => {
 	  console.time('proc')
 
     const [rows] = await pool.query('CALL beer_search_name(?);', [beerName]);
+
+    if (!rows[0] || rows[0].length === 0) {
+      return res.status(404).json({ message: "Beer not found" });
+    }
     
 	  console.timeEnd('proc')
 
@@ -241,7 +245,7 @@ app.post('/api/addReview', async (req, res) => {
        res.json({ 
         success: true,
         review: {
-          review_id: rows[0][0].review_id,
+          review_id: rows[0][0].new_review_id,
           Name: beerName,
           username: userId,
           beer_id: beerId,

@@ -23,7 +23,6 @@ function Review(props) {
           Reviewed by {props.username === userId ? "me" : props.username}
         </Card.Subtitle>
         <Card.Text>
-          ID: {props.review_id} <br />
           Overall: {props.overall_score} <br />
           Taste: {props.taste_score} <br />
           Appearance: {props.appearance_score} <br />
