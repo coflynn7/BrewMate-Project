@@ -7,12 +7,12 @@ drop procedure if exists similar_beers;
 delimiter $$
 create procedure similar_beers(IN beerid bigint)
 begin
-select *
+select b2.*
 from beer b1
 join beer b2
-  on b1.beer_id < b2.beer_id
-  and b1.style = b2.style
-  and b1.abv = b2.abv
+    ON b1.style = b2.style
+    AND b1.beer_id <> b2.beer_id
+    AND b2.abv BETWEEN b1.abv - 0.2 AND b1.abv + 0.2
 where b1.beer_id = beerid;
 end $$
 delimiter ;

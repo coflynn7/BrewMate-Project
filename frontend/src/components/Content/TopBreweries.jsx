@@ -25,7 +25,7 @@ function TopBreweries () {
         .then((res) => {
             setTopBreweries(res.data[0]);
         })
-        .catch((err) => console.error('Error getting top beers', err));
+        .catch((err) => console.error('Error getting top breweries', err));
     };
 
     useEffect(loadTopBreweries, []);

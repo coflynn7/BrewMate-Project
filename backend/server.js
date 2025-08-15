@@ -318,6 +318,43 @@ app.get('/api/beerInfo', async (req, res) => {
   }
 })
 
+app.get('/api/similarBeers', async (req, res) => {
+    try {
+
+    //first we need to find the beer_id for the beer the user entered
+    const beerName = req.query.targetBeerName;
+    
+	  console.time('proc1')
+
+    const [rows1] = await pool.query('CALL beer_search_name(?);', [beerName]);
+
+    if (!rows1[0] || rows1[0].length === 0) {
+      return res.status(404).json({ message: "The entered beer was not found. Please check the spelling and try again." });
+    }
+    
+	  console.timeEnd('proc1')
+
+    const beerId = rows1[0][0].beer_id;
+
+    console.time('proc2');
+
+    const [rows2] = await pool.query('CALL similar_beers(?);', [beerId]);
+
+    console.timeEnd('proc2');
+
+    if (!rows2[0] || rows2[0].length === 0) {
+      return res.status(404).json({ message: "No similar beers were found. Please try again with a different beer." });
+    }
+
+    res.json(rows2[0]);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to perform similar beers search' });
+  }
+})
+
 //start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

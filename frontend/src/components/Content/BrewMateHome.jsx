@@ -72,6 +72,7 @@ function BrewMateHome () {
         <Button variant="link" onClick={() => navigate("../topBeers")}>Top Rated Beers</Button>
         <Button variant="link" onClick={() => navigate("../topBreweries")}>Top Rated Breweries</Button>
         <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>
+        <Button variant="link" onClick={() => navigate("../similarBeerSearch")}>Find Similar Beers</Button>
         <Button variant="link" onClick={handleLogout}>Logout</Button>
 
         <h4>Showing <strong>recent</strong> reviews</h4>
