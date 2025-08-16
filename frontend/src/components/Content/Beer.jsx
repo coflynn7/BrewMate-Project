@@ -24,7 +24,8 @@ function Beer(props) {
             if (isFavorite) {
                 await api.post('/deleteFavorite', { beerId: props.beer_id, userId });
                 setFavorites(prev => prev.filter(b => b.beer_id !== props.beer_id));
-            } else {
+            } 
+            else {
                 await api.post('/addFavorite', { beerId: props.beer_id, userId });
                 const newBeer = { beer_id: props.beer_id, Name: props.Name, avg: props.avg, count: props.count };
                 setFavorites(prev => [...prev, newBeer]);

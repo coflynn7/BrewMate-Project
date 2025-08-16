@@ -69,6 +69,7 @@ function BrewMateHome () {
         <Button variant="link" onClick={() => navigate("../myReviews")}>My Reviews</Button>
         <Button variant="link" onClick={() => setShowReviewModal(true)}>Leave a Review</Button>
             <LeaveReviewModal show={showReviewModal} addToRecents={addReview} handleClose={() => setShowReviewModal(false)} />
+        <Button variant="link" onClick={() => navigate("../reviewCompare")}>Community Score Compare</Button>
         <Button variant="link" onClick={() => navigate("../topBeers")}>Top Rated Beers</Button>
         <Button variant="link" onClick={() => navigate("../topBreweries")}>Top Rated Breweries</Button>
         <Button variant="link" onClick={() => navigate("../mostFavorited")}>Most Favorited Beers</Button>

@@ -355,6 +355,26 @@ app.get('/api/similarBeers', async (req, res) => {
   }
 })
 
+app.get('/api/myReviewsCompare', async (req, res) => {
+    try {
+      
+    const userId = req.query.userId;
+    
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL user_review_diff(?);', [userId]);
+
+	  console.timeEnd('proc')
+
+    res.json(rows[0]);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch review comparison' });
+  }
+})
+
 //start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
