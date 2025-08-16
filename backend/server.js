@@ -59,20 +59,6 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-//searching the beer database given user-selected filters
-app.get('/api/search', (req, res) => {
-  //extract search criteria provided by the user
-  const {beerName, style} = req.query;
-  
-  //temp hardcoding query results for test purposes
-  const results = [
-    {beerName: "Hamm's Special Light", beerStyle: "Lager"},
-    {beerName: "Guinness", beerStyle: "Stout"}
-  ];
-
-  res.json({ results });
-});
-
 //retrieving recent reviews
 app.get('/api/recentReviews', async (req, res) => {
     try {
@@ -101,14 +87,14 @@ app.get('/api/topbeers', async (req, res) => {
     try {
 
     const targetScore = Number(req.query.targetScore) || 4;
+    const style = req.query?.style ?? null;
     const offsetAmt   = Number(req.query.offset) || 0;
 	  
-	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
 	  console.time('proc')
 
-    const [rows] = await pool.query('CALL top_beers(?, ? );', [targetScore, offsetAmt]);
+    const [rows] = await pool.query('CALL top_beers(?, ?, ? );',
+      [targetScore, style, offsetAmt]);
 		
-	 // const [[{ totCount }]] = await pool.query('SELECT @totCount AS totCount');
 	  console.timeEnd('proc')
 
     res.json(rows);
@@ -124,12 +110,15 @@ app.get('/api/topBreweries', async (req, res) => {
     try {
 
     const targetScore = Number(req.query.targetScore) || 4;
+    const state = req.query?.state ?? null;
+    const style = req.query?.style ?? null;
     const offsetAmt   = Number(req.query.offset) || 0;
 	  
 	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
 	  console.time('proc')
 
-    const [rows] = await pool.query('CALL top_brewery(?, ? );', [targetScore, offsetAmt]);
+    const [rows] = await pool.query('CALL top_brewery(?, ?, ?, ? );', 
+      [targetScore, state, style, offsetAmt]);
 		
 	  console.timeEnd('proc')
 

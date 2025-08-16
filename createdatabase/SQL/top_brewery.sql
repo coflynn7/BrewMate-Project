@@ -18,13 +18,13 @@ select brewery.brewery_id, max(brewery.name) 'name' , avg(reviews.overall_score)
 from reviews
 	inner join beer
       on reviews.beer_id = beer.beer_id
-        and beer.style LIKE inStyle
+        and beer.style LIKE CONCAT('%', inStyle, '%')
 	inner join brewery
       on beer.brewery_id = brewery.brewery_id
-		and brewery.state LIKE inState
+		and brewery.state LIKE CONCAT('%', inState, '%')
 group by brewery.brewery_id
 having avg(reviews.overall_score) > target_score
 ORDER BY avg(reviews.overall_score) DESC
-LIMIT 10 OFFSET offsetAmt;
+LIMIT 12 OFFSET offsetAmt;
 end $$
 delimiter ;

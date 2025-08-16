@@ -18,6 +18,11 @@ function Beer(props) {
     //don't need a state var for this since we'll update the favorites context
     const isFavorite = favorites.some(fav => fav.beer_id === props.beer_id);
 
+    let avgScore = 0;  //only used in the following context
+    if(props.context === "top beers") {
+        avgScore = Number(props.avg).toFixed(2);
+    }
+
     const handleFavoriteClick = async () => {
         setLoading(true);
         try {
@@ -76,7 +81,7 @@ function Beer(props) {
 
             <Card.Body>
                 <Card.Title>{props.Name}</Card.Title>
-                {props.context === "top beers" && <Card.Subtitle>Score: {props.avg}</Card.Subtitle>}
+                {props.context === "top beers" && <Card.Subtitle>Average Score: {avgScore}</Card.Subtitle>}
                 {props.context === "most favorited" && <Card.Subtitle>Favorited {props.count} times</Card.Subtitle>}
 
                 <Button

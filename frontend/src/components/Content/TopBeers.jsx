@@ -12,6 +12,7 @@ function TopBeers () {
     const [topBeers, setTopBeers] = useState([]);
 
     const targetScoreRef = useRef();
+    const styleRef = useRef();
     const offsetRef = useRef();
 
     const loadTopBeers = () => {
@@ -19,6 +20,7 @@ function TopBeers () {
         api.get('/topbeers', {
             params: {
                 targetScore: targetScoreRef.current.value,
+                style: styleRef.current.value,
                 offset: offsetRef.current.value
             }
         })
@@ -40,13 +42,18 @@ function TopBeers () {
             <Form onSubmit={loadTopBeers} className="d-flex justify-content-center align-items-center gap-2" style={{ flexWrap: 'nowrap' }}>
 
             <Form.Group className="mb-0" controlId="targetScoreInput">
-            <Form.Label>Minimum Score</Form.Label>
-            <Form.Control ref={targetScoreRef} defaultValue="4" style={{ width: '120px', height: '38px' }}/>
+            <Form.Label>Min Score</Form.Label>
+            <Form.Control ref={targetScoreRef} placeholder="4" style={{ width: '80px', height: '38px' }}/>
+            </Form.Group>
+
+            <Form.Group className="mb-0" controlId="styleInput">
+            <Form.Label>Style</Form.Label>
+            <Form.Control ref={styleRef} placeholder="All" style={{ width: '140px', height: '38px' }}/>
             </Form.Group>
 
             <Form.Group className="mb-0" controlId="offsetInput">
             <Form.Label>Skip Top Reviews #</Form.Label>
-            <Form.Control ref={offsetRef} defaultValue="0" style={{ width: '120px', height: '38px' }}/>
+            <Form.Control ref={offsetRef} placeholder="0" style={{ width: '80px', height: '38px' }}/>
             </Form.Group>
 
             <Button variant="primary" onClick={loadTopBeers} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
