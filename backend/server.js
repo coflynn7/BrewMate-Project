@@ -88,7 +88,7 @@ app.get('/api/topbeers', async (req, res) => {
 
     const targetScore = Number(req.query.targetScore) || 4;
     const style = req.query?.style ?? null;
-    const offsetAmt   = Number(req.query.offset) || 0;
+    const offsetAmt = Number(req.query.offset) || 0;
 	  
 	  console.time('proc')
 
@@ -112,7 +112,7 @@ app.get('/api/topBreweries', async (req, res) => {
     const targetScore = Number(req.query.targetScore) || 4;
     const state = req.query?.state ?? null;
     const style = req.query?.style ?? null;
-    const offsetAmt   = Number(req.query.offset) || 0;
+    const offsetAmt = Number(req.query.offset) || 0;
 	  
 	  //we could implement logic to set the offset amount equal to the size of the # of records per page * page
 	  console.time('proc')
@@ -361,6 +361,26 @@ app.get('/api/myReviewsCompare', async (req, res) => {
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to fetch review comparison' });
+  }
+})
+
+app.get('/api/topReviewers', async (req, res) => {
+    try {
+
+    const offsetAmt = Number(req.query.offset) || 0;
+	  
+	  console.time('proc')
+
+    const [rows] = await pool.query('CALL top_reviewers(?);', [offsetAmt]);
+		
+	  console.timeEnd('proc')
+
+    res.json(rows[0]);
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to get top reviewers' });
   }
 })
 

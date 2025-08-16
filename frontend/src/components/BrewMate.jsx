@@ -1,5 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import { FavoritesProvider } from './Contexts/FavoritesContext';
+import { UserProvider } from './Contexts/UserContext';
+
 import BrewMateLogin from './Auth/BrewMateLogin';
 import BrewMateRegister from './Auth/BrewMateRegister';
 import BrewMateHome from './Content/BrewMateHome';
@@ -12,9 +15,7 @@ import MostFavoritedBrews from './Content/MostFavoritedBrews';
 import MyBrewReviews from './Content/MyBrewReviews';
 import SimilarBrews from './Content/SimilarBrews';
 import BrewReviewCompare from './Content/BrewReviewCompare'
-
-import { FavoritesProvider } from './Contexts/FavoritesContext';
-import { UserProvider } from './Contexts/UserContext';
+import TopReviewers from './Content/TopReviewers';
 
 function BrewMate() {
 
@@ -29,6 +30,7 @@ function BrewMate() {
           <Route path="/home" element={<BrewMateHome />}></Route>
           <Route path="/favorites" element={<BrewFavorites />}></Route>
           <Route path="/myReviews" element={<MyBrewReviews />}></Route>
+          <Route path="/topReviewers" element={<TopReviewers />}></Route>
           <Route path="/topBeers" element={<TopBeers />}></Route>
           <Route path="/topBreweries" element={<TopBreweries />}></Route>
           <Route path="/mostFavorited" element={<MostFavoritedBrews />}></Route>

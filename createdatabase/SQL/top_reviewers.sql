@@ -14,7 +14,7 @@ from (select username
 		from reviews
 		group by username
 		order by count(*) desc
-		limit 10 offset offsetAmt) subq
+		limit 12 offset offsetAmt) subq
 	join reviews 
       on reviews.username = subq.username
 group by reviews.username;
