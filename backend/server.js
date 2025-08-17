@@ -274,7 +274,8 @@ app.get('/api/myReviews', async (req, res) => {
     
 	  console.time('proc')
 
-    const [rows] = await pool.query('select * from reviews where username = ?;', [userId]);
+    const [rows] = await pool.query('select r.*,b.Name from reviews r inner join beer b on b.beer_id = r.beer_id where r.username = ?;',
+      [userId]);
 
 	  console.timeEnd('proc')
 
@@ -304,6 +305,36 @@ app.get('/api/beerInfo', async (req, res) => {
     catch (err) {
       console.error('DB query error:', err);
       res.status(500).json({ error: 'Failed to fetch beer details' });
+  }
+})
+
+app.get('/api/breweryInfo', async (req, res) => {
+    try {
+      
+    const breweryId = req.query.breweryId;
+    
+	  console.time('proc');
+
+    //run both of the following SPs in parallel - we need the info from both
+    const [result1, result2] = await Promise.all([
+      pool.query('CALL brewery_info(?);', [breweryId]),
+      pool.query('CALL top_beer_by_brew(?);', [breweryId])
+    ]);
+    
+    console.timeEnd('proc');
+
+    const generalDetails = result1[0][0];
+    const topBeers = result2[0][0];
+
+    res.json({
+      generalDetails,
+      topBeers
+    });
+
+    } 
+    catch (err) {
+      console.error('DB query error:', err);
+      res.status(500).json({ error: 'Failed to fetch brewery details' });
   }
 })
 

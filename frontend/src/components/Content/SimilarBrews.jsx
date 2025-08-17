@@ -57,6 +57,8 @@ function SimilarBrews() {
         <div>
         {
         similarBeers.length > 0 && (
+            <>
+            <p><em>Showing results for reference beer {similarBeers[0].referenceBeerName}</em></p>
             <Row>
                 {
                     similarBeers.map(beer => {
@@ -66,6 +68,7 @@ function SimilarBrews() {
                     })
                 }
             </Row>
+            </>
             )
         }
         </div>

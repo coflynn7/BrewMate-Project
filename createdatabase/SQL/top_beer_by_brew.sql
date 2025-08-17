@@ -6,7 +6,7 @@ drop procedure if exists top_beer_by_brew;
 delimiter $$
 create procedure top_beer_by_brew(IN breweryid bigint)
 begin
-select max(brewery.Name), max(beer.Name), avg(overall_score), avg(palette_score),avg(aroma_score), avg(taste_score)
+select max(brewery.Name), max(beer.Name) 'beerName', avg(overall_score) 'overall', avg(palette_score) 'palette', avg(aroma_score) 'aroma', avg(taste_score) 'taste'
 from brewery
 	inner join beer
       on brewery.brewery_id = beer.brewery_id

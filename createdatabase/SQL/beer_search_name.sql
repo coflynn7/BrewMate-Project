@@ -16,6 +16,6 @@ select beer.*, brewery.Name 'Brewery_name', brewery.state
 from beer
 	left outer join brewery
 		on beer.brewery_id = brewery.brewery_id
-where beer.name LIKE beerName;
+where beer.name LIKE beerName limit 1;
 end $$
 delimiter ;

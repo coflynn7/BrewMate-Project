@@ -16,6 +16,7 @@ function Beer(props) {
     const [beerDetails, setBeerDetails] = useState(null);
 
     //don't need a state var for this since we'll update the favorites context
+    //check if this beer is already favorited
     const isFavorite = favorites.some(fav => fav.beer_id === props.beer_id);
 
     let avgScore = 0;  //only used in the following context
@@ -100,6 +101,7 @@ function Beer(props) {
                         {detailLoading && <Spinner animation="border" size="sm" />}
                         {!detailLoading && beerDetails && (
                             <>
+                                <strong>Times Favorited:</strong> {beerDetails.fav_count ?? 0} <br />
                                 <strong>ABV:</strong> {beerDetails.abv !== "NA" ? beerDetails.abv + "%" : "Unknown"} <br />
                                 <strong>Style:</strong> {beerDetails.style} <br />
                                 <strong>Brewery:</strong> {beerDetails.Brewery_name} <br />

@@ -59,7 +59,7 @@ function TopBreweries () {
             </Form.Group>
 
             <Form.Group className="mb-0" controlId="offsetInput">
-            <Form.Label>Skip Top Reviews #</Form.Label>
+            <Form.Label>Skip Top Breweries #</Form.Label>
             <Form.Control ref={offsetRef} placeholder="0" style={{ width: '80px', height: '38px' }}/>
             </Form.Group>
 

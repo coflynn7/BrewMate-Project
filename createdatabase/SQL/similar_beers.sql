@@ -7,7 +7,7 @@ drop procedure if exists similar_beers;
 delimiter $$
 create procedure similar_beers(IN beerid bigint)
 begin
-select b2.*
+select b2.*, b1.Name 'referenceBeerName'
 from beer b1
 join beer b2
     ON b1.style = b2.style
