@@ -13,6 +13,7 @@ function MostFavoritedBrews () {
 
     const loadMostFavoritedBeers = () => {
         setBeers([]);
+        setBeersLoaded(false);
         api.get('/mostFavorited')
         .then((res) => {
             setBeers(res.data[0]);

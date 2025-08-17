@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Col, Row, Button, Form } from "react-bootstrap";
+import { Col, Row, Button, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
@@ -10,13 +10,28 @@ function TopBeers () {
     const navigate = useNavigate();
 
     const [topBeers, setTopBeers] = useState([]);
+    const [error, setError] = useState(null);
+    const [dataLoaded, setDataLoaded] = useState(false);
 
     const targetScoreRef = useRef();
     const styleRef = useRef();
     const offsetRef = useRef();
 
     const loadTopBeers = () => {
+        //validate user inputs
+        setError(null);
+        if(targetScoreRef.current.value > 5) {
+            setError("The Min Score cannot be above 5.");
+            return;
+        }
+
+        if(offsetRef.current.value < 0) {
+            setError("The Skip Top Beers # cannot be below 0.")
+            return;
+        }
+
         setTopBeers([]);
+        setDataLoaded(false);
         api.get('/topbeers', {
             params: {
                 targetScore: targetScoreRef.current.value,
@@ -26,6 +41,7 @@ function TopBeers () {
         })
         .then((res) => {
             setTopBeers(res.data[0]);
+            setDataLoaded(true);
         })
         .catch((err) => console.error('Error getting top beers', err));
     };
@@ -52,12 +68,13 @@ function TopBeers () {
             </Form.Group>
 
             <Form.Group className="mb-0" controlId="offsetInput">
-            <Form.Label>Skip Top Reviews #</Form.Label>
+            <Form.Label>Skip Top Beers #</Form.Label>
             <Form.Control ref={offsetRef} placeholder="0" style={{ width: '80px', height: '38px' }}/>
             </Form.Group>
 
-            <Button variant="primary" onClick={loadTopBeers} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
+            <Button variant="primary" onClick={loadTopBeers} disabled={!dataLoaded} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
             </Form>
+            {error && <Alert variant="danger" className="mt-3" style={{ maxWidth: '400px', margin: '0 auto' }}>{error}</Alert>}
 
         </div>
 
@@ -73,9 +90,11 @@ function TopBeers () {
                     })
                 }
             </Row>
-            : <>
-                <p>The top beers are currently loading ...</p>
-            </>
+            : dataLoaded ? <Alert variant="primary" className="mt-3" style={{ maxWidth: '475px', margin: '0 auto' }}>No beers found! Please update the search fields and try again.</Alert>
+                :
+                <>
+                    <p>The top beers are currently loading ...</p>
+                </>
         }
         </div>
     </div>

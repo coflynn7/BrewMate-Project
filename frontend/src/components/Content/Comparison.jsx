@@ -12,7 +12,7 @@ function Comparison(props) {
             <Card.Title>{props.Name}</Card.Title>
             <Card.Text className="text-start">
                 My average: {myScore} <br />
-                Average for other uers: {otherScore} <br />
+                Average for other users: {otherScore} <br />
                 Difference: {diff} <br />
             </Card.Text>
             </Card.Body>

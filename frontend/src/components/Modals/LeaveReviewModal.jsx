@@ -166,7 +166,7 @@ function LeaveReviewModal({ show, handleClose, addToRecents }) {
                 ))}
               </Form.Select>
             </Form.Group>
-            )
+            
             <Button variant="secondary" onClick={() => setStep(1)}>
               Change Beer
             </Button>{" "}

@@ -29,8 +29,6 @@ export default function Brewery(props) {
                 .then(res => {
                     setBreweryDetails(res.data["generalDetails"][0]);
                     setBreweryTopBeers(res.data["topBeers"]);
-                    console.log("all: ", res.data);
-                    console.log("just spec: ", res.data["topBeers"]);
                 })
                 .catch(err => console.error('Error getting brewery details', err))
                 .finally(() => setDetailLoading(false));

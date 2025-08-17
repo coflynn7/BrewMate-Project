@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Col, Row, Button, Form } from "react-bootstrap";
+import { Col, Row, Button, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Reviewer from './Reviewer';
 import api from '../../api/axios';
@@ -11,8 +11,14 @@ function TopReviewers() {
 
     const [reviewers, setReviewers] = useState([]);
     const [reviewersLoaded, setReviewersLoaded] = useState(false);
+    const [error, setError] = useState(null);
 
     const loadTopReviewers = () => {
+        setError(null);
+        if(offsetRef.current.value < 0) {
+            setError("The Skip Top Reviewers # cannot be below 0.")
+            return;
+        }
         setReviewers([]);
         setReviewersLoaded(false);
         api.get('/topReviewers', {
@@ -43,6 +49,7 @@ function TopReviewers() {
             </Form.Group>
             <Button variant="primary" onClick={loadTopReviewers} style={{ verticalAlign: 'middle', height: '38px' }}>Update</Button>
             </Form>
+            {error && <Alert variant="danger" className="mt-3" style={{ maxWidth: '350px', margin: '0 auto' }}>{error}</Alert>}
         </div>
 
         <div>
