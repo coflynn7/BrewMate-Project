@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react';
+import { useRef, useContext } from 'react';
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
@@ -6,7 +6,7 @@ import api from '../../api/axios';
 import { UserContext } from '../Contexts/UserContext';
 
 function Login() {
-    const { userId, setUserId } = useContext(UserContext);
+    const { setUserId } = useContext(UserContext);
     
     const usernameRef = useRef();
     const pinRef = useRef();

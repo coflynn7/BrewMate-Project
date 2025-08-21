@@ -1,9 +1,13 @@
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 
+import { UserContext } from '../Contexts/UserContext';
+
 export default function BadgerRegister() {
+
+    const { setUserId } = useContext(UserContext);
 
     const usernameRef = useRef();
     const pinRef = useRef();
@@ -33,7 +37,10 @@ export default function BadgerRegister() {
             username: username,
             password: pin
         })
-        .then(response => navigate("../home", {replace: true}))
+        .then(response => {
+            setUserId(username);
+            navigate("../home", {replace: true});
+        })
         .catch(error => {
             if(error.response && error.response.status === 409) {
                 alert("This username is already in use. Please choose a different one and try again.");
